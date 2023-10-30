@@ -18,15 +18,20 @@ pipeline {
             }
         }
         stage("Deploy to EKS") {
-            steps {
-                script {
-                    dir('kubernetes') {
-                        sh "aws eks update-kubeconfig --name myapp-eks-cluster"
-                        sh "kubectl apply -f nginx-deployment.yaml"
-                        sh "kubectl apply -f nginx-service.yaml"
-                    }
-                }
+    steps {
+        script {
+            dir('kubernetes') {
+                sh "aws eks update-kubeconfig --name myapp-eks-cluster"
+                
+                // Apply your YAML files one by one
+                sh "kubectl apply -f app-deployment.yaml"
+                sh "kubectl apply -f db-deployment.yaml"
+                sh "kubectl apply -f mysql-configMap.yaml"
+                sh "kubectl apply -f mysql-secrets.yaml"
             }
         }
+    }
+}
+
     }
 }
